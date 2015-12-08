@@ -17,14 +17,17 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
   var currentJumpSpeed = jumpSpeed
   // Falling
   var maxFallSpeed = 5D
-  var currentFallSpeed = 0.1D
+  var currentFallSpeed = 0.2D
+  // Last drawn position
+  var lastDrawX = x
+  var lastDrawY = y
   
-  def tick(delta: Double) = {
-    if (right) x += 1 * delta
-    if (left) x -= 1 * delta
+  def tick = {
+    if (right) x += 1
+    if (left) x -= 1
     if (jumping) {
       y -= currentJumpSpeed
-      currentJumpSpeed -= 0.1D * delta
+      currentJumpSpeed -= 0.1
       if (currentJumpSpeed <= 0) {
         currentJumpSpeed = jumpSpeed
         jumping = false
@@ -34,7 +37,7 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
     if (falling) {
       y += currentFallSpeed
       if (currentFallSpeed < maxFallSpeed) {
-        currentFallSpeed += 0.1 * delta
+        currentFallSpeed += 0.1
       }
     }
     if (!falling) {
@@ -42,11 +45,15 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
     }
   }
   
-  def draw(g: Graphics2D) = {
+  def draw(g: Graphics2D, interpolation: Float) = {
    g.setColor(Color.WHITE)
    g.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT)
    g.setColor(Color.BLACK)
-   g.fillRect(x.asInstanceOf[Int], y.asInstanceOf[Int], width, height)
+   val drawX = (x - lastDrawX) * interpolation + lastDrawX;
+   val drawY = (y - lastDrawY) * interpolation + lastDrawY;
+   g.fillRect(drawX.asInstanceOf[Int] , drawY.asInstanceOf[Int], width, height)
+   lastDrawX = drawX
+   lastDrawY = drawY
   }
   
   def keyPressed(e: Int) = {

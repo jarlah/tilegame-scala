@@ -12,7 +12,7 @@ class MenuState(gsm: StateManager) extends State(gsm) {
   
   def init = Nil
   
-  def draw(g: Graphics2D): Unit = {
+  def draw(g: Graphics2D, interpolation: Float): Unit = {
     g.setColor(new Color(48,146,233))
     g.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT)
     for (i <- options.indices) yield {
@@ -54,5 +54,5 @@ class MenuState(gsm: StateManager) extends State(gsm) {
   
   def keyReleased(e: Int): Unit = Nil
   
-  def tick(delta: Double): Unit = Nil
+  def tick(): Unit = Nil
 }
