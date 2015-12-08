@@ -5,6 +5,11 @@ import java.awt.Graphics2D
 import java.awt.Color
 import com.github.jarlah.tilegame.Settings
 import java.awt.event.KeyEvent
+import com.github.jarlah.tilegame.state.StateManager
+import com.github.jarlah.tilegame.objects.Block
+import com.github.jarlah.tilegame.physics.Collision
+import java.awt.Point
+import com.github.jarlah.tilegame.state.State
 
 class Player(var x: Double, var y: Double, width: Int, height: Int) extends Settings {  
   // Movement
@@ -13,30 +18,69 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
   var jumping = false
   var falling = false
   // Jumping
-  var jumpSpeed = 5D
+  var jumpSpeed = 4D
   var currentJumpSpeed = jumpSpeed
   // Falling
   var maxFallSpeed = 5D
   var currentFallSpeed = 0.1D
   
-  def tick(delta: Double) = {
-    if (right) x += 1 * delta
-    if (left) x -= 1 * delta
+  var topCollision = false
+  
+  def tick(delta: Double, blocks: Array[Array[Block]]) = {
+    blocks.map{ block => 
+      block.map { b =>
+        if (Collision.playerBlock(new Point((x + width + State.xOffset).toInt, (y + State.yOffset + 2).toInt), b) 
+         || Collision.playerBlock(new Point((x + width + State.xOffset).toInt, (y + height + State.yOffset - 1).toInt), b)) {
+          right = false;
+        }
+        
+        if (Collision.playerBlock(new Point((x + State.xOffset - 1).toInt, (y + State.yOffset + 2).toInt), b) 
+         || Collision.playerBlock(new Point((x + State.xOffset - 1).toInt, (y + height + State.yOffset - 1).toInt), b)) {
+          left = false;
+        }
+        
+        if (Collision.playerBlock(new Point((x + State.xOffset + 1).toInt, (y + State.yOffset * delta).toInt), b) 
+         || Collision.playerBlock(new Point((x + width + State.xOffset - 1).toInt, (y + State.yOffset).toInt), b)) {
+          jumping = false;
+          falling = true;
+        }
+        
+        if (Collision.playerBlock(new Point((x + State.xOffset + 2).toInt, (y + height + State.yOffset + 1).toInt), b) 
+         || Collision.playerBlock(new Point((x + width + State.xOffset - 1).toInt, (y + height + State.yOffset + 1).toInt), b)) {
+          y = b.getY - height - State.yOffset
+          falling = false
+          topCollision = true
+        } else {
+          if (!topCollision && !jumping) {
+            falling = true;
+          }
+        }
+      }
+    }
+    
+    topCollision = false
+    
+    if (right) State.xOffset += 1 * delta
+    
+    if (left) State.xOffset -= 1 * delta
+    
     if (jumping) {
-      y -= currentJumpSpeed
-      currentJumpSpeed -= 0.1D * delta
+      State.yOffset -= currentJumpSpeed * delta
+      currentJumpSpeed -= 0.1D
       if (currentJumpSpeed <= 0) {
         currentJumpSpeed = jumpSpeed
         jumping = false
         falling = true
       }
     }
+    
     if (falling) {
-      y += currentFallSpeed
+      State.yOffset += currentFallSpeed * delta
       if (currentFallSpeed < maxFallSpeed) {
-        currentFallSpeed += 0.1 * delta
+        currentFallSpeed += 0.1
       }
     }
+    
     if (!falling) {
       currentFallSpeed = 0.1
     }
@@ -52,15 +96,11 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
   def keyPressed(e: Int) = {
     if (e == KeyEvent.VK_RIGHT) right = true
     if (e == KeyEvent.VK_LEFT) left = true
-    if (e == KeyEvent.VK_SPACE) jumping = true
+    if (e == KeyEvent.VK_SPACE && !jumping && !falling) jumping = true
   }
   
   def keyReleased(e: Int) = {
     if (e == KeyEvent.VK_RIGHT) right = false
     if (e == KeyEvent.VK_LEFT) left = false
-    if (e == KeyEvent.VK_SPACE) {
-      jumping = false
-      falling = true
-    }
   }
 }

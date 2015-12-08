@@ -12,3 +12,8 @@ abstract class State(gsm: StateManager) extends Settings {
   def keyPressed(e: Int): Unit
   def keyReleased(e: Int): Unit
 }
+
+object State {
+  var xOffset = 0D
+  var yOffset = 0D
+}
