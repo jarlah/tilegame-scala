@@ -4,21 +4,21 @@ package com.github.jarlah.tilegame.main
 import scala.collection.JavaConversions._
 
 trait Loop extends Runnable {
-  val GAME_HERTZ = 60.0
-  val TIME_BETWEEN_UPDATES = 1000000000 / GAME_HERTZ
-  val MAX_UPDATES_BEFORE_RENDER = 5
-  val TARGET_FPS = 120
-  val TARGET_TIME_BETWEEN_RENDERS = 1000000000 / TARGET_FPS
 
-  var paused = false
-  var running = false
+  protected var paused: Boolean = false
+
+  protected var running: Boolean = false
 
   def run() {
     running = true
-
+    val GAME_HERTZ = 60.0
+    val TIME_BETWEEN_UPDATES = 1000000000 / GAME_HERTZ
+    val MAX_UPDATES_BEFORE_RENDER = 5
     var lastUpdateTime = System.nanoTime()
     var lastRenderTime = System.nanoTime()
     var frameCount = 0
+    val TARGET_FPS = 120
+    val TARGET_TIME_BETWEEN_RENDERS = 1000000000 / TARGET_FPS
     var lastSecondTime = (lastUpdateTime / 1000000000).toInt
     while (running) {
       var now = System.nanoTime()
@@ -61,6 +61,8 @@ trait Loop extends Runnable {
   }
 
   protected def render()
+
   protected def draw(interpolation: Float)
+
   protected def tick()
 }
