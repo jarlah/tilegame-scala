@@ -6,12 +6,12 @@ import java.awt.Graphics2D
 import com.github.jarlah.tilegame.objects.Block
 
 class Level1State(gsm: StateManager) extends State(gsm) {
-  val player = new Player(GAME_WIDTH / 2, GAME_HEIGHT / 2, 30, 30)
+  val player = new Player(300, 300, 30, 30)
   
   val blocks: Array[Block] = Array[Block](
     new Block(100, 100),
     new Block(200, 200),
-    new Block(300, 300)
+    new Block(300, 340)
   )
   
   def draw(g: Graphics2D) = {

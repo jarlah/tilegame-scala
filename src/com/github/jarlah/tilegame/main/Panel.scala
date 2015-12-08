@@ -57,7 +57,7 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
 
       // update our FPS counter if a second has passed since we last recorded
       if (lastFpsTime >= 1000000000) {
-        System.out.println("(FPS: " + frames + ")")
+        System.out.println("(TIME: " + lastFpsTime + " / FPS: " + frames + ")")
         lastFpsTime = 0
         frames = 0
       }
@@ -71,7 +71,9 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
       // to this and then factor in the current time to give 
       // us our final value to wait for
       // remember this is in ms, whereas our lastLoopTime etc. vars are in ns.
-      Try { Thread.sleep((lastLoopTime - System.nanoTime() + OPTIMAL_TIME) / 1000000) }
+      val waitMs = (lastLoopTime - System.nanoTime() + OPTIMAL_TIME) / 1000000
+      
+      Try { Thread.sleep(waitMs) }
     }
   }
 
