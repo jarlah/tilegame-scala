@@ -12,8 +12,11 @@ import com.github.jarlah.tilegame.Settings
 import java.awt.Color
 import scala.util.Try
 
-class Panel extends Canvas() with Loop with Settings with KeyListener {
-  
+class Panel extends Canvas() with Settings with Runnable with KeyListener {
+  var running = false
+
+  val fps = 60
+  val targetTime = 1000 / fps
   val gsm = new StateManager
   val image = new BufferedImage(GAME_WIDTH, GAME_HEIGHT, BufferedImage.TYPE_INT_RGB);
 
@@ -29,10 +32,53 @@ class Panel extends Canvas() with Loop with Settings with KeyListener {
   val thread = new Thread(this)
   thread.start()
 
-  override def tick() = gsm.tick
-  override def draw(interpolation: Float) = gsm.draw(image.createGraphics, interpolation)
+  def run = {
+    running = true
+    
+    var frames = 0
+    var lastFpsTime = 0L
+    var lastLoopTime = System.nanoTime
+    
+    val TARGET_FPS: Int = 60
+    val OPTIMAL_TIME: Long = 1000000000 / TARGET_FPS
 
-  override def render = {
+    while (running) {
+      // work out how long its been since the last update, this
+      // will be used to calculate how far the entities should
+      // move this loop
+      var now = System.nanoTime
+      var updateLength = now - lastLoopTime
+      lastLoopTime = now
+      var delta = updateLength / OPTIMAL_TIME.asInstanceOf[Double]
+
+      // update the frame counter
+      lastFpsTime += updateLength
+      frames += 1
+
+      // update our FPS counter if a second has passed since we last recorded
+      if (lastFpsTime >= 1000000000) {
+        System.out.println("(FPS: " + frames + ")")
+        lastFpsTime = 0
+        frames = 0
+      }
+
+      tick(delta)
+      draw
+      render
+      
+      // we want each frame to take 10 milliseconds, to do this
+      // we've recorded when we started the frame. We add 10 milliseconds
+      // to this and then factor in the current time to give 
+      // us our final value to wait for
+      // remember this is in ms, whereas our lastLoopTime etc. vars are in ns.
+      Try { Thread.sleep((lastLoopTime - System.nanoTime() + OPTIMAL_TIME) / 1000000) }
+    }
+  }
+
+  def tick(delta: Double) = gsm.tick(delta)
+  def draw = gsm.draw(image.createGraphics)
+
+  def render = {
     val bs = getBufferStrategy
     if (bs == null) {
       createBufferStrategy(3)

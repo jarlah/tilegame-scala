@@ -14,14 +14,14 @@ class Level1State(gsm: StateManager) extends State(gsm) {
     new Block(300, 300)
   )
   
-  def draw(g: Graphics2D, interpolation: Float) = {
-    player.draw(g, interpolation)
+  def draw(g: Graphics2D) = {
+    player.draw(g)
     blocks.map(b => b.draw(g))
   }
   
   def keyPressed(e: Int) = player.keyPressed(e)
   def keyReleased(e: Int) = player.keyReleased(e)
-  def tick = player.tick
+  def tick(delta: Double) = player.tick(delta)
   
   def init = Nil
 }
