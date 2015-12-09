@@ -31,18 +31,18 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
   def tick(delta: Double, blocks: Array[Array[Block]]) = {
     blocks.map{ block => 
       block.map { b =>
-        if (Collision.playerBlock(new Point((x + width + State.xOffset).toInt, (y + State.yOffset + 2).toInt), b) 
-         || Collision.playerBlock(new Point((x + width + State.xOffset).toInt, (y + height + State.yOffset - 1).toInt), b)) {
+        if (Collision.playerBlock(new Point((x + width + State.xOffset + 2).toInt, (y + State.yOffset + 2).toInt), b) 
+         || Collision.playerBlock(new Point((x + width + State.xOffset + 2).toInt, (y + height + State.yOffset - 1).toInt), b)) {
           right = false;
         }
         
-        if (Collision.playerBlock(new Point((x + State.xOffset - 1).toInt, (y + State.yOffset + 2).toInt), b) 
+        if (Collision.playerBlock(new Point((x + State.xOffset - 4).toInt, (y + State.yOffset + 2).toInt), b) 
          || Collision.playerBlock(new Point((x + State.xOffset - 1).toInt, (y + height + State.yOffset - 1).toInt), b)) {
           left = false;
         }
         
-        if (Collision.playerBlock(new Point((x + State.xOffset + 1).toInt, (y + State.yOffset * delta).toInt), b) 
-         || Collision.playerBlock(new Point((x + width + State.xOffset - 1).toInt, (y + State.yOffset).toInt), b)) {
+        if (Collision.playerBlock(new Point((x + State.xOffset + 1).toInt, (y + State.yOffset - 4).toInt), b) 
+         || Collision.playerBlock(new Point((x + width + State.xOffset - 1).toInt, (y + State.yOffset - 4).toInt), b)) {
           jumping = false;
           falling = true;
         }
