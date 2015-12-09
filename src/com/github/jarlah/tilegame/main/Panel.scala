@@ -78,7 +78,12 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
   }
 
   def tick(delta: Double) = gsm.tick(delta)
-  def draw = gsm.draw(image.createGraphics)
+  def draw = {
+    val g = image.createGraphics
+    g.setColor(Color.WHITE)
+    g.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT)
+    gsm.draw(g)
+  }
 
   def render = {
     val bs = getBufferStrategy

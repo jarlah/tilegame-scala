@@ -2,20 +2,31 @@ package com.github.jarlah.tilegame.map
 
 import com.github.jarlah.tilegame.objects.Block
 import java.awt.Graphics2D
+import scala.io.Source
+import scala.collection.mutable.ListBuffer
+import Block._
 
 class BlockMap(path: String, width: Int, height: Int) {
-  var blocks: Array[Array[Block]] = Array.ofDim(height, width)
   
-  for (row <- 0 until height) yield {
-    for (col <- 0 until width) yield {
-      blocks(row)(col) = new Block(col * Block.blockSize, row * Block.blockSize) 
+  val reader = Source.fromURL(getClass.getResource(path)).bufferedReader()
+  
+  val rows = reader.readLine.toInt
+  val cols = reader.readLine.toInt
+  
+  val blocks:Array[Array[Block]] = Array.ofDim(rows, cols)
+  
+  for (row <- 0 until rows) yield {
+    val line = reader.readLine()
+    val tokens = line.split("\\s+")
+    for (col <- 0 until cols) yield {
+      blocks(row)(col) = new Block(col * blockSize, row * blockSize, tokens(col).toInt)
     }
   }
  
   def draw(g: Graphics2D) {
-    for (row <- 0 until height) yield {
-      for (col <- 0 until width) yield {
-        blocks(row)(col).draw(g)
+    for (rowN <- 0 until rows) yield {
+      for (colN <- 0 until cols) yield {
+        blocks(rowN)(colN).draw(g)
       }
     }
   }

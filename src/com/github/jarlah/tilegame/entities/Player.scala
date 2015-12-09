@@ -17,6 +17,8 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
   var left = false
   var jumping = false
   var falling = false
+  // Move
+  var moveSpeed = 2.5
   // Jumping
   var jumpSpeed = 4D
   var currentJumpSpeed = jumpSpeed
@@ -60,9 +62,9 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
     
     topCollision = false
     
-    if (right) State.xOffset += 1 * delta
+    if (right) State.xOffset += moveSpeed * delta
     
-    if (left) State.xOffset -= 1 * delta
+    if (left) State.xOffset -= moveSpeed * delta
     
     if (jumping) {
       State.yOffset -= currentJumpSpeed * delta
@@ -87,8 +89,6 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
   }
   
   def draw(g: Graphics2D) = {
-   g.setColor(Color.WHITE)
-   g.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT)
    g.setColor(Color.BLACK)
    g.fillRect(x.asInstanceOf[Int], y.asInstanceOf[Int], width, height)
   }
