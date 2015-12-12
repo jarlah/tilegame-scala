@@ -23,9 +23,8 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
   setPreferredSize(GAME_DIMENSIONS)
   setMaximumSize(GAME_DIMENSIONS)
   setMinimumSize(GAME_DIMENSIONS)
-  setFocusable(true);
-  requestFocus
-
+  setFocusable(true)
+  setIgnoreRepaint(true)
   addKeyListener(this)
 
   gsm.states.push(new MenuState(gsm))
@@ -87,15 +86,11 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
 
   def render = {
     val bs = getBufferStrategy
-    if (bs == null) {
-      createBufferStrategy(3)
-    } else {
-      val g2d = bs.getDrawGraphics.asInstanceOf[Graphics2D]
-      g2d.drawImage(image, 0, 0, null)
-      Toolkit.getDefaultToolkit.sync
-      g2d.dispose
-      bs.show
-    }
+    val g2d = bs.getDrawGraphics.asInstanceOf[Graphics2D]
+    g2d.drawImage(image, 0, 0, null)
+    Toolkit.getDefaultToolkit.sync
+    g2d.dispose
+    bs.show
   }
 
   def keyPressed(e: KeyEvent) = gsm.keyPressed(e.getKeyCode)
