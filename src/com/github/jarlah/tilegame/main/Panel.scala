@@ -18,6 +18,7 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
   val fps = 60
   val targetTime = 1000 / fps
   val gsm = new StateManager
+  gsm.states.push(new MenuState(gsm))
   val image = new BufferedImage(GAME_WIDTH, GAME_HEIGHT, BufferedImage.TYPE_INT_RGB);
 
   setPreferredSize(GAME_DIMENSIONS)
@@ -27,13 +28,16 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
   setIgnoreRepaint(true)
   addKeyListener(this)
 
-  gsm.states.push(new MenuState(gsm))
-  val thread = new Thread(this)
-  thread.start()
-
-  def run = {
+  override def addNotify = {
+    super.addNotify()
+    createBufferStrategy(3)
+    val thread = new Thread(this)
     running = true
-    
+    thread.start()
+    requestFocus
+  }
+ 
+  def run = {
     var frames = 0
     var lastFpsTime = 0L
     var lastLoopTime = System.nanoTime
@@ -77,6 +81,7 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
   }
 
   def tick(delta: Double) = gsm.tick(delta)
+  
   def draw = {
     val g = image.createGraphics
     g.setColor(Color.WHITE)
@@ -94,6 +99,8 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
   }
 
   def keyPressed(e: KeyEvent) = gsm.keyPressed(e.getKeyCode)
+  
   def keyReleased(e: KeyEvent) = gsm.keyReleased(e.getKeyCode)
+  
   def keyTyped(e: KeyEvent) = Nil
 }

@@ -21,8 +21,8 @@ class MenuState(gsm: StateManager) extends State(gsm) {
       } else {
         g.setColor(Color.DARK_GRAY)
       }
-      g.setFont(new Font("Arial", Font.BOLD, 50))
-      g.drawString(options(i), (GAME_WIDTH - 110) / 2, 150 + i * 150)
+      g.setFont(new Font("Arial", Font.BOLD, 20))
+      g.drawString(options(i), (GAME_WIDTH - 110) / 2, 150 + i * 30)
     }
   }
   

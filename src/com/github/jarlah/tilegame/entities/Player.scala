@@ -132,7 +132,7 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
    g.fillRect(bottomLeftTile.x - State.xOffset.toInt, bottomLeftTile.y - State.yOffset.toInt, 3, 3)
    g.setColor(Color.RED)
    g.fillRect(bottomRightTile.x - State.xOffset.toInt, bottomRightTile.y - State.yOffset.toInt, 3, 3)
-   g.setColor(Color.BLACK)
+   g.setColor(Color.CYAN)
    g.fillRect(x.asInstanceOf[Int], y.asInstanceOf[Int], width, height)
   }
   
