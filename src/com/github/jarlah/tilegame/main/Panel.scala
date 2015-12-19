@@ -32,12 +32,13 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
     super.addNotify()
     createBufferStrategy(3)
     val thread = new Thread(this)
-    running = true
     thread.start()
     requestFocus
   }
  
   def run = {
+    running = true
+    
     var frames = 0
     var lastFpsTime = 0L
     var lastLoopTime = System.nanoTime
@@ -46,21 +47,14 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
     val OPTIMAL_TIME: Long = 1000000000 / TARGET_FPS
 
     while (running) {
-      // work out how long its been since the last update, this
-      // will be used to calculate how far the entities should
-      // move this loop
       var now = System.nanoTime
       var updateLength = now - lastLoopTime
       lastLoopTime = now
       var delta = updateLength / OPTIMAL_TIME.asInstanceOf[Double]
-
-      // update the frame counter
       lastFpsTime += updateLength
       frames += 1
 
-      // update our FPS counter if a second has passed since we last recorded
       if (lastFpsTime >= 1000000000) {
-        System.out.println("(TIME: " + lastFpsTime + " / FPS: " + frames + ")")
         lastFpsTime = 0
         frames = 0
       }
@@ -68,14 +62,8 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
       tick(delta)
       draw
       render
-      
-      // we want each frame to take 10 milliseconds, to do this
-      // we've recorded when we started the frame. We add 10 milliseconds
-      // to this and then factor in the current time to give 
-      // us our final value to wait for
-      // remember this is in ms, whereas our lastLoopTime etc. vars are in ns.
+
       val waitMs = (lastLoopTime - System.nanoTime() + OPTIMAL_TIME) / 1000000
-      
       Try { Thread.sleep(waitMs) }
     }
   }

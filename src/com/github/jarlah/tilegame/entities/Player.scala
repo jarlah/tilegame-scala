@@ -7,7 +7,6 @@ import java.awt.event.KeyEvent
 
 import com.github.jarlah.tilegame.Settings
 import com.github.jarlah.tilegame.objects.Block
-import com.github.jarlah.tilegame.state.State
 import com.github.jarlah.tilegame.state.State.xOffset
 import com.github.jarlah.tilegame.state.State.yOffset
 
@@ -25,9 +24,8 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
   // Falling
   var maxFallSpeed = 5D
   var currentFallSpeed = 0.1D
-  
-  var topCollision = false
-  
+  // Collision
+  var floorCollision = false
   var rightTopTile: Point =    null
   var rightBottomTile: Point = null
   var leftTopTile: Point =     null
@@ -36,8 +34,6 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
   var topRightTile: Point = 	  null
   var bottomLeftTile: Point =  null
   var bottomRightTile: Point = null
-  
-  val padding = 2
   
   def tick(delta: Double, blocks: Array[Array[Block]]) = {
     rightTopTile =        new Point((x + xOffset + width + 2).toInt,     (y + yOffset + 2).toInt)
@@ -53,6 +49,7 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
     bottomRightTile =     new Point((x + xOffset + width - 1).toInt,     (y + yOffset + height + 1).toInt)
     
     // We want to keep going left or right for ex when we jump 
+    // Therefore we manipulate these local variables as copies of the original
     var goLeft = left
     var goRight = right
     
@@ -60,22 +57,26 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
       block.map { b =>
         if (b.blocking) {
           if (b.contains(rightTopTile) || b.contains(rightBottomTile)) {
+            println("Right collision")
             goRight = false;
           }
           if (b.contains(leftTopTile) || b.contains(leftBottomTile)) {
+            println("Left collision")
             goLeft = false;
           }
           if (b.contains(topLeftTile) || b.contains(topRightTile)) {
+            println("Top collision")
             jumping = false;
             falling = true;
           }
           if (b.contains(bottomLeftTile) || b.contains(bottomRightTile)) {
-        	   y = b.getY - height - State.yOffset
+            println("Floor collision")
+        	  y = b.getY - height - yOffset
         	  falling = false
-            topCollision = true
+            floorCollision = true
           }
         } else {
-          if (!topCollision && !jumping) {
+          if (!floorCollision && !jumping) {
             falling = true;
             jumping = false
           }
@@ -83,55 +84,49 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
       }
     }
     
-    topCollision = false
+    floorCollision = false
     
-    if (goRight) State.xOffset += moveSpeed * delta
-
-    if (goLeft) State.xOffset -= moveSpeed * delta
+    if (goRight) xOffset += moveSpeed * delta
+    if (goLeft) xOffset -= moveSpeed * delta
     
     if (jumping) {
-      State.yOffset -= currentJumpSpeed * delta
+      yOffset -= currentJumpSpeed * delta
       currentJumpSpeed -= 0.1D
       if (currentJumpSpeed <= 0) {
         currentJumpSpeed = jumpSpeed
-        jumping = false
         falling = true
+        jumping = false
       }
     }
     
     if (falling) {
-      State.yOffset += currentFallSpeed * delta
+      yOffset += currentFallSpeed * delta
       if (currentFallSpeed < maxFallSpeed) {
         currentFallSpeed += 0.1
       }
     }
     
-    if (!falling) {
-      currentFallSpeed = 0.1
-    }
-    
-    if (!jumping) {
-      currentJumpSpeed = jumpSpeed
-    }
+    if (!falling) currentFallSpeed = 0.1
+    if (!jumping) currentJumpSpeed = jumpSpeed
   }
   
   def draw(g: Graphics2D) = {
    g.setColor(Color.BLUE)
-   g.fillRect(rightTopTile.x - State.xOffset.toInt, rightTopTile.y - State.yOffset.toInt, 3, 3)
+   g.fillRect(rightTopTile.x - xOffset.toInt, rightTopTile.y - yOffset.toInt, 3, 3)
    g.setColor(Color.BLUE)
-   g.fillRect(rightBottomTile.x - State.xOffset.toInt, rightBottomTile.y - State.yOffset.toInt, 3, 3)
+   g.fillRect(rightBottomTile.x - xOffset.toInt, rightBottomTile.y - yOffset.toInt, 3, 3)
    g.setColor(Color.RED)
-   g.fillRect(leftTopTile.x - State.xOffset.toInt, leftTopTile.y - State.yOffset.toInt, 3, 3)
+   g.fillRect(leftTopTile.x - xOffset.toInt, leftTopTile.y - yOffset.toInt, 3, 3)
    g.setColor(Color.RED)
-   g.fillRect(leftBottomTile.x - State.xOffset.toInt, leftBottomTile.y - State.yOffset.toInt, 3, 3)
+   g.fillRect(leftBottomTile.x - xOffset.toInt, leftBottomTile.y - yOffset.toInt, 3, 3)
    g.setColor(Color.RED)
-   g.fillRect(topLeftTile.x - State.xOffset.toInt, topLeftTile.y - State.yOffset.toInt, 3, 3)
+   g.fillRect(topLeftTile.x - xOffset.toInt, topLeftTile.y - yOffset.toInt, 3, 3)
    g.setColor(Color.RED)
-   g.fillRect(topRightTile.x - State.xOffset.toInt, topRightTile.y - State.yOffset.toInt, 3, 3)
+   g.fillRect(topRightTile.x - xOffset.toInt, topRightTile.y - yOffset.toInt, 3, 3)
    g.setColor(Color.RED)
-   g.fillRect(bottomLeftTile.x - State.xOffset.toInt, bottomLeftTile.y - State.yOffset.toInt, 3, 3)
+   g.fillRect(bottomLeftTile.x - xOffset.toInt, bottomLeftTile.y - yOffset.toInt, 3, 3)
    g.setColor(Color.RED)
-   g.fillRect(bottomRightTile.x - State.xOffset.toInt, bottomRightTile.y - State.yOffset.toInt, 3, 3)
+   g.fillRect(bottomRightTile.x - xOffset.toInt, bottomRightTile.y - yOffset.toInt, 3, 3)
    g.setColor(Color.CYAN)
    g.fillRect(x.asInstanceOf[Int], y.asInstanceOf[Int], width, height)
   }
