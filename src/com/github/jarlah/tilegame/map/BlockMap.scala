@@ -6,7 +6,7 @@ import scala.io.Source
 import scala.collection.mutable.ListBuffer
 import Block._
 
-class BlockMap(path: String, width: Int, height: Int) {
+class BlockMap(path: String) {
   
   val reader = Source.fromURL(getClass.getResource(path)).bufferedReader()
   

@@ -7,9 +7,9 @@ import com.github.jarlah.tilegame.objects.Block
 import com.github.jarlah.tilegame.map.BlockMap
 
 class Level1State(gsm: StateManager) extends State(gsm) {
-  val player = new Player(3 * Block.blockSize, 4 * Block.blockSize, 30, 30)
+  val player = new Player(3 * Block.blockSize, 4 * Block.blockSize, 32, 32)
   
-  val map = new BlockMap("/Maps/level1.map", 4, 4)
+  val map = new BlockMap("/Maps/level1.map")
   
   def draw(g: Graphics2D) = {
     map.draw(g)
