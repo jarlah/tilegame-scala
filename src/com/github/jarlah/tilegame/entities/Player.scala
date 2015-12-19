@@ -1,16 +1,15 @@
 package com.github.jarlah.tilegame.entities
 
-import java.awt.Rectangle
-import java.awt.Graphics2D
 import java.awt.Color
-import com.github.jarlah.tilegame.Settings
-import java.awt.event.KeyEvent
-import com.github.jarlah.tilegame.state.StateManager
-import com.github.jarlah.tilegame.objects.Block
-import com.github.jarlah.tilegame.physics.Collision
+import java.awt.Graphics2D
 import java.awt.Point
+import java.awt.event.KeyEvent
+
+import com.github.jarlah.tilegame.Settings
+import com.github.jarlah.tilegame.objects.Block
 import com.github.jarlah.tilegame.state.State
-import com.github.jarlah.tilegame.state.State._
+import com.github.jarlah.tilegame.state.State.xOffset
+import com.github.jarlah.tilegame.state.State.yOffset
 
 class Player(var x: Double, var y: Double, width: Int, height: Int) extends Settings {  
   // Movement
@@ -53,14 +52,18 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
     bottomLeftTile =      new Point((x + xOffset + 2).toInt,             (y + yOffset + height + 1).toInt)
     bottomRightTile =     new Point((x + xOffset + width - 1).toInt,     (y + yOffset + height + 1).toInt)
     
+    // We want to keep going left or right for ex when we jump 
+    var goLeft = left
+    var goRight = right
+    
     blocks.map { block =>
       block.map { b =>
         if (b.blocking) {
           if (b.contains(rightTopTile) || b.contains(rightBottomTile)) {
-            right = false;
+            goRight = false;
           }
           if (b.contains(leftTopTile) || b.contains(leftBottomTile)) {
-            left = false;
+            goLeft = false;
           }
           if (b.contains(topLeftTile) || b.contains(topRightTile)) {
             jumping = false;
@@ -82,9 +85,9 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
     
     topCollision = false
     
-    if (right) State.xOffset += moveSpeed * delta
+    if (goRight) State.xOffset += moveSpeed * delta
 
-    if (left) State.xOffset -= moveSpeed * delta
+    if (goLeft) State.xOffset -= moveSpeed * delta
     
     if (jumping) {
       State.yOffset -= currentJumpSpeed * delta
@@ -113,17 +116,24 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
   }
   
   def draw(g: Graphics2D) = {
+   g.setColor(Color.BLUE)
+   g.fillRect(rightTopTile.x - State.xOffset.toInt, rightTopTile.y - State.yOffset.toInt, 3, 3)
+   g.setColor(Color.BLUE)
+   g.fillRect(rightBottomTile.x - State.xOffset.toInt, rightBottomTile.y - State.yOffset.toInt, 3, 3)
+   g.setColor(Color.RED)
+   g.fillRect(leftTopTile.x - State.xOffset.toInt, leftTopTile.y - State.yOffset.toInt, 3, 3)
+   g.setColor(Color.RED)
+   g.fillRect(leftBottomTile.x - State.xOffset.toInt, leftBottomTile.y - State.yOffset.toInt, 3, 3)
+   g.setColor(Color.RED)
+   g.fillRect(topLeftTile.x - State.xOffset.toInt, topLeftTile.y - State.yOffset.toInt, 3, 3)
+   g.setColor(Color.RED)
+   g.fillRect(topRightTile.x - State.xOffset.toInt, topRightTile.y - State.yOffset.toInt, 3, 3)
+   g.setColor(Color.RED)
+   g.fillRect(bottomLeftTile.x - State.xOffset.toInt, bottomLeftTile.y - State.yOffset.toInt, 3, 3)
+   g.setColor(Color.RED)
+   g.fillRect(bottomRightTile.x - State.xOffset.toInt, bottomRightTile.y - State.yOffset.toInt, 3, 3)
    g.setColor(Color.BLACK)
    g.fillRect(x.asInstanceOf[Int], y.asInstanceOf[Int], width, height)
-   g.setColor(Color.RED)
-   g.fillRect(rightTopTile.x, rightTopTile.y, width, height)
-   g.fillRect(rightBottomTile.x, rightBottomTile.y, width, height)
-   g.fillRect(leftTopTile.x, leftTopTile.y, width, height)
-   g.fillRect(leftBottomTile.x, leftBottomTile.y, width, height)
-   g.fillRect(topLeftTile.x, topLeftTile.y, width, height)
-   g.fillRect(topRightTile.x, topRightTile.y, width, height)
-   g.fillRect(bottomLeftTile.x, bottomLeftTile.y, width, height)
-   g.fillRect(bottomRightTile.x, bottomRightTile.y, width, height)
   }
   
   def keyPressed(e: Int) = {
