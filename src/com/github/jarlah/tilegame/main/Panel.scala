@@ -12,15 +12,7 @@ import com.github.jarlah.tilegame.Settings
 import java.awt.Color
 import scala.util.Try
 
-class Panel extends Canvas() with Settings with Runnable with KeyListener {
-  var running = false
-
-  val fps = 60
-  val targetTime = 1000 / fps
-  val gsm = new StateManager
-  gsm.states.push(new MenuState(gsm))
-  val image = new BufferedImage(GAME_WIDTH, GAME_HEIGHT, BufferedImage.TYPE_INT_RGB);
-
+class Panel(gsm: StateManager = new StateManager) extends Canvas() with Settings with Runnable with KeyListener {
   setPreferredSize(GAME_DIMENSIONS)
   setMaximumSize(GAME_DIMENSIONS)
   setMinimumSize(GAME_DIMENSIONS)
@@ -28,16 +20,19 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
   setIgnoreRepaint(true)
   addKeyListener(this)
 
+  val drawingBoard = new BufferedImage(GAME_WIDTH, GAME_HEIGHT, BufferedImage.TYPE_INT_RGB);
+  
   override def addNotify = {
     super.addNotify()
     createBufferStrategy(3)
+    gsm.states.push(new MenuState(gsm))
     val thread = new Thread(this)
     thread.start()
     requestFocus
   }
- 
+
   def run = {
-    running = true
+    var running = true
     
     var frames = 0
     var lastFpsTime = 0L
@@ -71,7 +66,7 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
   def tick(delta: Double) = gsm.tick(delta)
   
   def draw = {
-    val g = image.createGraphics
+    val g = drawingBoard.createGraphics
     g.setColor(Color.WHITE)
     g.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT)
     gsm.draw(g)
@@ -80,7 +75,7 @@ class Panel extends Canvas() with Settings with Runnable with KeyListener {
   def render = {
     val bs = getBufferStrategy
     val g2d = bs.getDrawGraphics.asInstanceOf[Graphics2D]
-    g2d.drawImage(image, 0, 0, null)
+    g2d.drawImage(drawingBoard, 0, 0, null)
     Toolkit.getDefaultToolkit.sync
     g2d.dispose
     bs.show

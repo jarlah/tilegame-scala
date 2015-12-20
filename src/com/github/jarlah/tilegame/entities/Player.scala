@@ -10,30 +10,33 @@ import com.github.jarlah.tilegame.objects.Block
 import com.github.jarlah.tilegame.state.State.xOffset
 import com.github.jarlah.tilegame.state.State.yOffset
 
-class Player(var x: Double, var y: Double, width: Int, height: Int) extends Settings {  
-  // Movement
-  var right = false
-  var left = false
-  var jumping = false
-  var falling = false
-  // Move
-  var moveSpeed = 2.5
-  // Jumping
-  var jumpSpeed = 4D
-  var currentJumpSpeed = jumpSpeed
-  // Falling
-  var maxFallSpeed = 5D
-  var currentFallSpeed = 0.1D
-  // Collision
-  var floorCollision = false
-  var rightTopTile: Point =    null
-  var rightBottomTile: Point = null
-  var leftTopTile: Point =     null
-  var leftBottomTile: Point =  null
-  var topLeftTile: Point = 	  null
-  var topRightTile: Point = 	  null
-  var bottomLeftTile: Point =  null
-  var bottomRightTile: Point = null
+class Player(var x: Double,
+             var y: Double,
+             val width: Int,
+             val height: Int,
+             // Directions
+             var right: Boolean = false,
+             var left: Boolean = false,
+             var jumping: Boolean = false,
+             var falling: Boolean = false,
+             // Speed
+             var moveSpeed: Double = 2.5,
+             // Jumping
+             var jumpSpeed: Double = 3.6D,
+             var currentJumpSpeed: Double = 3.6D,
+             // Falling
+             var maxFallSpeed: Double = 5D,
+             var currentFallSpeed: Double = 0.1D,
+             // Collision
+             var floorCollision: Boolean = false,
+             var rightTopTile: Point = null,
+             var rightBottomTile: Point = null,
+             var leftTopTile: Point = null,
+             var leftBottomTile: Point = null,
+             var topLeftTile: Point = null,
+             var topRightTile: Point = null,
+             var bottomLeftTile: Point = null,
+             var bottomRightTile: Point = null) extends Settings {  
   
   def tick(delta: Double, blocks: Array[Array[Block]]) = {
     rightTopTile =        new Point((x + xOffset + width + 2).toInt,     (y + yOffset + 2).toInt)
@@ -57,20 +60,20 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
       block.map { b =>
         if (b.blocking) {
           if (b.contains(rightTopTile) || b.contains(rightBottomTile)) {
-            println("Right collision")
+            //println("Right collision")
             goRight = false;
           }
           if (b.contains(leftTopTile) || b.contains(leftBottomTile)) {
-            println("Left collision")
+            //println("Left collision")
             goLeft = false;
           }
           if (b.contains(topLeftTile) || b.contains(topRightTile)) {
-            println("Top collision")
+            //println("Top collision")
             jumping = false;
             falling = true;
           }
           if (b.contains(bottomLeftTile) || b.contains(bottomRightTile)) {
-            println("Floor collision")
+            //println("Floor collision")
         	  y = b.getY - height - yOffset
         	  falling = false
             floorCollision = true
@@ -86,11 +89,11 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
     
     floorCollision = false
     
-    if (goRight) xOffset += moveSpeed * delta
-    if (goLeft) xOffset -= moveSpeed * delta
+    if (goRight) x += moveSpeed * delta
+    if (goLeft) x -= moveSpeed * delta
     
     if (jumping) {
-      yOffset -= currentJumpSpeed * delta
+      y -= currentJumpSpeed * delta
       currentJumpSpeed -= 0.1D
       if (currentJumpSpeed <= 0) {
         currentJumpSpeed = jumpSpeed
@@ -100,7 +103,7 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
     }
     
     if (falling) {
-      yOffset += currentFallSpeed * delta
+      y += currentFallSpeed * delta
       if (currentFallSpeed < maxFallSpeed) {
         currentFallSpeed += 0.1
       }
@@ -111,22 +114,22 @@ class Player(var x: Double, var y: Double, width: Int, height: Int) extends Sett
   }
   
   def draw(g: Graphics2D) = {
-   g.setColor(Color.BLUE)
-   g.fillRect(rightTopTile.x - xOffset.toInt, rightTopTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.BLUE)
-   g.fillRect(rightBottomTile.x - xOffset.toInt, rightBottomTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.RED)
-   g.fillRect(leftTopTile.x - xOffset.toInt, leftTopTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.RED)
-   g.fillRect(leftBottomTile.x - xOffset.toInt, leftBottomTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.RED)
-   g.fillRect(topLeftTile.x - xOffset.toInt, topLeftTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.RED)
-   g.fillRect(topRightTile.x - xOffset.toInt, topRightTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.RED)
-   g.fillRect(bottomLeftTile.x - xOffset.toInt, bottomLeftTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.RED)
-   g.fillRect(bottomRightTile.x - xOffset.toInt, bottomRightTile.y - yOffset.toInt, 3, 3)
+//   g.setColor(Color.BLUE)
+//   g.fillRect(rightTopTile.x - xOffset.toInt, rightTopTile.y - yOffset.toInt, 3, 3)
+//   g.setColor(Color.BLUE)
+//   g.fillRect(rightBottomTile.x - xOffset.toInt, rightBottomTile.y - yOffset.toInt, 3, 3)
+//   g.setColor(Color.RED)
+//   g.fillRect(leftTopTile.x - xOffset.toInt, leftTopTile.y - yOffset.toInt, 3, 3)
+//   g.setColor(Color.RED)
+//   g.fillRect(leftBottomTile.x - xOffset.toInt, leftBottomTile.y - yOffset.toInt, 3, 3)
+//   g.setColor(Color.RED)
+//   g.fillRect(topLeftTile.x - xOffset.toInt, topLeftTile.y - yOffset.toInt, 3, 3)
+//   g.setColor(Color.RED)
+//   g.fillRect(topRightTile.x - xOffset.toInt, topRightTile.y - yOffset.toInt, 3, 3)
+//   g.setColor(Color.RED)
+//   g.fillRect(bottomLeftTile.x - xOffset.toInt, bottomLeftTile.y - yOffset.toInt, 3, 3)
+//   g.setColor(Color.RED)
+//   g.fillRect(bottomRightTile.x - xOffset.toInt, bottomRightTile.y - yOffset.toInt, 3, 3)
    g.setColor(Color.CYAN)
    g.fillRect(x.asInstanceOf[Int], y.asInstanceOf[Int], width, height)
   }
