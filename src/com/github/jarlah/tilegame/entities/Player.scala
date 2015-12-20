@@ -25,7 +25,7 @@ class Player(var x: Double,
              var jumpSpeed: Double = 3.6D,
              var currentJumpSpeed: Double = 3.6D,
              // Falling
-             var maxFallSpeed: Double = 5D,
+             var maxFallSpeed: Double = 6D,
              var currentFallSpeed: Double = 0.1D,
              // Collision
              var floorCollision: Boolean = false,
@@ -114,22 +114,22 @@ class Player(var x: Double,
   }
   
   def draw(g: Graphics2D) = {
-//   g.setColor(Color.BLUE)
-//   g.fillRect(rightTopTile.x - xOffset.toInt, rightTopTile.y - yOffset.toInt, 3, 3)
-//   g.setColor(Color.BLUE)
-//   g.fillRect(rightBottomTile.x - xOffset.toInt, rightBottomTile.y - yOffset.toInt, 3, 3)
-//   g.setColor(Color.RED)
-//   g.fillRect(leftTopTile.x - xOffset.toInt, leftTopTile.y - yOffset.toInt, 3, 3)
-//   g.setColor(Color.RED)
-//   g.fillRect(leftBottomTile.x - xOffset.toInt, leftBottomTile.y - yOffset.toInt, 3, 3)
-//   g.setColor(Color.RED)
-//   g.fillRect(topLeftTile.x - xOffset.toInt, topLeftTile.y - yOffset.toInt, 3, 3)
-//   g.setColor(Color.RED)
-//   g.fillRect(topRightTile.x - xOffset.toInt, topRightTile.y - yOffset.toInt, 3, 3)
-//   g.setColor(Color.RED)
-//   g.fillRect(bottomLeftTile.x - xOffset.toInt, bottomLeftTile.y - yOffset.toInt, 3, 3)
-//   g.setColor(Color.RED)
-//   g.fillRect(bottomRightTile.x - xOffset.toInt, bottomRightTile.y - yOffset.toInt, 3, 3)
+   g.setColor(Color.BLUE)
+   g.fillRect(rightTopTile.x - xOffset.toInt, rightTopTile.y - yOffset.toInt, 3, 3)
+   g.setColor(Color.BLUE)
+   g.fillRect(rightBottomTile.x - xOffset.toInt, rightBottomTile.y - yOffset.toInt, 3, 3)
+   g.setColor(Color.RED)
+   g.fillRect(leftTopTile.x - xOffset.toInt, leftTopTile.y - yOffset.toInt, 3, 3)
+   g.setColor(Color.RED)
+   g.fillRect(leftBottomTile.x - xOffset.toInt, leftBottomTile.y - yOffset.toInt, 3, 3)
+   g.setColor(Color.RED)
+   g.fillRect(topLeftTile.x - xOffset.toInt, topLeftTile.y - yOffset.toInt, 3, 3)
+   g.setColor(Color.RED)
+   g.fillRect(topRightTile.x - xOffset.toInt, topRightTile.y - yOffset.toInt, 3, 3)
+   g.setColor(Color.RED)
+   g.fillRect(bottomLeftTile.x - xOffset.toInt, bottomLeftTile.y - yOffset.toInt, 3, 3)
+   g.setColor(Color.RED)
+   g.fillRect(bottomRightTile.x - xOffset.toInt, bottomRightTile.y - yOffset.toInt, 3, 3)
    g.setColor(Color.CYAN)
    g.fillRect(x.asInstanceOf[Int], y.asInstanceOf[Int], width, height)
   }
