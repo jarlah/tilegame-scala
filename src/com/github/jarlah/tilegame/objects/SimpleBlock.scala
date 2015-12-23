@@ -1,20 +1,12 @@
 package com.github.jarlah.tilegame.objects
 
-import java.awt.Rectangle
-import java.awt.Graphics2D
 import java.awt.Color
-import com.github.jarlah.tilegame.state.StateManager
+import java.awt.Graphics2D
 import com.github.jarlah.tilegame.state.State
+import com.github.jarlah.tilegame.map.Block
 
-object Block {
-  val EMPTY = 0
-  val blockSize: Int = 32
-}
-
-import Block._
-
-class Block(x: Int, y: Int, id: Int) extends Rectangle(x, y, blockSize, blockSize) {
-  def draw(g: Graphics2D) = {
+class SimpleBlock(x: Int, y: Int, id: Int) extends Block(x, y) {
+  override def draw(g: Graphics2D) = {
     if (id == 1) {
       g.setColor(Color.DARK_GRAY)
     }
@@ -30,6 +22,5 @@ class Block(x: Int, y: Int, id: Int) extends Rectangle(x, y, blockSize, blockSiz
     }
   }
   
-  def blocking = id == 1
+  override def blocking = id == 1
 }
-

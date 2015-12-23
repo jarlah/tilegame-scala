@@ -1,10 +1,11 @@
 package com.github.jarlah.tilegame.map
 
-import com.github.jarlah.tilegame.objects.Block
+import com.github.jarlah.tilegame.map.Block
 import java.awt.Graphics2D
 import scala.io.Source
 import scala.collection.mutable.ListBuffer
 import Block._
+import com.github.jarlah.tilegame.objects.SimpleBlock
 
 class BlockMap(path: String) {
   
@@ -19,7 +20,7 @@ class BlockMap(path: String) {
     val line = reader.readLine()
     val tokens = line.split("\\s+")
     for (col <- 0 until cols) yield {
-      blocks(row)(col) = new Block(col * blockSize, row * blockSize, tokens(col).toInt)
+      blocks(row)(col) = Block.fromId(tokens(col).toInt, col * blockSize, row * blockSize)
     }
   }
  

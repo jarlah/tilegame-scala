@@ -4,11 +4,12 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.Point
 import java.awt.event.KeyEvent
-
 import com.github.jarlah.tilegame.Settings
-import com.github.jarlah.tilegame.objects.Block
+import com.github.jarlah.tilegame.map.Block
 import com.github.jarlah.tilegame.state.State.xOffset
 import com.github.jarlah.tilegame.state.State.yOffset
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
 
 class Player(var x: Double,
              var y: Double,
@@ -22,8 +23,8 @@ class Player(var x: Double,
              // Speed
              var moveSpeed: Double = 2.5,
              // Jumping
-             var jumpSpeed: Double = 3.6D,
-             var currentJumpSpeed: Double = 3.6D,
+             var jumpSpeed: Double = 4.5D,
+             var currentJumpSpeed: Double = 4.6D,
              // Falling
              var maxFallSpeed: Double = 6D,
              var currentFallSpeed: Double = 0.1D,
@@ -37,8 +38,43 @@ class Player(var x: Double,
              var topRightTile: Point = null,
              var bottomLeftTile: Point = null,
              var bottomRightTile: Point = null) extends Settings {  
+
+  var walkingAnimation: Animation = new Animation()
+  val walkingArr: Array[BufferedImage] = Array(
+    ImageIO.read(this.getClass.getClassLoader.getResourceAsStream("Player/p1_walk/PNG/p1_walk01.png")),
+    ImageIO.read(this.getClass.getClassLoader.getResourceAsStream("Player/p1_walk/PNG/p1_walk02.png")),
+    ImageIO.read(this.getClass.getClassLoader.getResourceAsStream("Player/p1_walk/PNG/p1_walk03.png")),
+    ImageIO.read(this.getClass.getClassLoader.getResourceAsStream("Player/p1_walk/PNG/p1_walk04.png")),
+    ImageIO.read(this.getClass.getClassLoader.getResourceAsStream("Player/p1_walk/PNG/p1_walk05.png")),
+    ImageIO.read(this.getClass.getClassLoader.getResourceAsStream("Player/p1_walk/PNG/p1_walk06.png")),
+    ImageIO.read(this.getClass.getClassLoader.getResourceAsStream("Player/p1_walk/PNG/p1_walk07.png")),
+    ImageIO.read(this.getClass.getClassLoader.getResourceAsStream("Player/p1_walk/PNG/p1_walk08.png")),
+    ImageIO.read(this.getClass.getClassLoader.getResourceAsStream("Player/p1_walk/PNG/p1_walk09.png")),
+    ImageIO.read(this.getClass.getClassLoader.getResourceAsStream("Player/p1_walk/PNG/p1_walk10.png")),
+    ImageIO.read(this.getClass.getClassLoader.getResourceAsStream("Player/p1_walk/PNG/p1_walk11.png"))
+  )
+  walkingAnimation.setFrames(walkingArr, Block.blockSize, Block.blockSize)
+  walkingAnimation.setDelay(70)
+  
+  var idleAnimation: Animation = new Animation()
+  val idleArr: Array[BufferedImage] = Array(
+    ImageIO.read(this.getClass.getClassLoader.getResourceAsStream("Player/p1_front.png"))
+  )
+  idleAnimation.setFrames(idleArr, Block.blockSize, Block.blockSize)
+  idleAnimation.setDelay(70)
+  
+  var jumpingAnimation: Animation = new Animation()
+  val jumpingArr: Array[BufferedImage] = Array(
+    ImageIO.read(this.getClass.getClassLoader.getResourceAsStream("Player/p1_jump.png"))
+  )
+  jumpingAnimation.setFrames(jumpingArr, Block.blockSize, Block.blockSize)
+  jumpingAnimation.setDelay(70)
+  
+  var currentAnimation: Animation = idleAnimation
   
   def tick(delta: Double, blocks: Array[Array[Block]]) = {
+    currentAnimation.update
+    
     rightTopTile =        new Point((x + xOffset + width + 2).toInt,     (y + yOffset + 2).toInt)
     rightBottomTile =     new Point((x + xOffset + width + 2).toInt,     (y + yOffset + height - 1).toInt)
     
@@ -60,20 +96,16 @@ class Player(var x: Double,
       block.map { b =>
         if (b.blocking) {
           if (b.contains(rightTopTile) || b.contains(rightBottomTile)) {
-            //println("Right collision")
             goRight = false;
           }
           if (b.contains(leftTopTile) || b.contains(leftBottomTile)) {
-            //println("Left collision")
             goLeft = false;
           }
           if (b.contains(topLeftTile) || b.contains(topRightTile)) {
-            //println("Top collision")
             jumping = false;
             falling = true;
           }
           if (b.contains(bottomLeftTile) || b.contains(bottomRightTile)) {
-            //println("Floor collision")
         	  y = b.getY - height - yOffset
         	  falling = false
             floorCollision = true
@@ -111,37 +143,38 @@ class Player(var x: Double,
     
     if (!falling) currentFallSpeed = 0.1
     if (!jumping) currentJumpSpeed = jumpSpeed
+    
+    if (jumping || falling) currentAnimation = jumpingAnimation
+    else if(left || right) currentAnimation = walkingAnimation
+    else currentAnimation = idleAnimation
   }
   
   def draw(g: Graphics2D) = {
-   g.setColor(Color.BLUE)
-   g.fillRect(rightTopTile.x - xOffset.toInt, rightTopTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.BLUE)
-   g.fillRect(rightBottomTile.x - xOffset.toInt, rightBottomTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.RED)
-   g.fillRect(leftTopTile.x - xOffset.toInt, leftTopTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.RED)
-   g.fillRect(leftBottomTile.x - xOffset.toInt, leftBottomTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.RED)
-   g.fillRect(topLeftTile.x - xOffset.toInt, topLeftTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.RED)
-   g.fillRect(topRightTile.x - xOffset.toInt, topRightTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.RED)
-   g.fillRect(bottomLeftTile.x - xOffset.toInt, bottomLeftTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.RED)
-   g.fillRect(bottomRightTile.x - xOffset.toInt, bottomRightTile.y - yOffset.toInt, 3, 3)
-   g.setColor(Color.CYAN)
-   g.fillRect(x.asInstanceOf[Int], y.asInstanceOf[Int], width, height)
+    if (left) {
+      g.drawImage(currentAnimation.getImage, x.asInstanceOf[Int] + width, y.asInstanceOf[Int], -width, height, null)
+    } else {
+      g.drawImage(currentAnimation.getImage, x.asInstanceOf[Int], y.asInstanceOf[Int], width, height, null)
+    }
   }
   
   def keyPressed(e: Int) = {
-    if (e == KeyEvent.VK_RIGHT) right = true
-    if (e == KeyEvent.VK_LEFT) left = true
-    if (e == KeyEvent.VK_SPACE && !jumping && !falling) jumping = true
+    if (e == KeyEvent.VK_RIGHT) {
+      right = true
+    }
+    if (e == KeyEvent.VK_LEFT) {
+      left = true
+    }
+    if (e == KeyEvent.VK_SPACE && !jumping && !falling) {
+      jumping = true
+    }
   }
   
   def keyReleased(e: Int) = {
-    if (e == KeyEvent.VK_RIGHT) right = false
-    if (e == KeyEvent.VK_LEFT) left = false
+    if (e == KeyEvent.VK_RIGHT) {
+      right = false
+    }
+    if (e == KeyEvent.VK_LEFT) {
+      left = false
+    }
   }
 }
